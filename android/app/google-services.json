@@ -22,7 +22,7 @@
           }
         },
         {
-          "client_id": "654930026791-fiptsvg8e5hcjtcsrikm37p5lm689ccf.apps.googleusercontent.com",
+          "client_id": "654930026791-iisngdgpmpf480ifmjpil1st6tojs4rj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -44,22 +44,22 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:654930026791:android:584e805b1847f2fc504902",
+        "mobilesdk_app_id": "1:654930026791:android:55e373c1fe47c0c9504902",
         "android_client_info": {
           "package_name": "com.example.stevebot"
         }
       },
       "oauth_client": [
         {
-          "client_id": "654930026791-n1flugs0madu321ppnrsl49r9195fgdc.apps.googleusercontent.com",
+          "client_id": "654930026791-lrhcl51loji0gbkmjrt6puu8nomvab18.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.stevebot",
-            "certificate_hash": "2d0e6a3f3688c70af8a66cad913bf0a81f38101b"
+            "certificate_hash": "37e7c6db0db1bf5dda940ebb461031e96272563b"
           }
         },
         {
-          "client_id": "654930026791-fiptsvg8e5hcjtcsrikm37p5lm689ccf.apps.googleusercontent.com",
+          "client_id": "654930026791-iisngdgpmpf480ifmjpil1st6tojs4rj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

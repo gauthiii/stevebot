@@ -40,7 +40,7 @@ class CS extends State<Home> {
   List<Prompt> prompts = [];
   setGPT() async {
     openAI = OpenAI.instance.build(
-        token: "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",
+        token: "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",
         baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
         enableLog: true);
 
@@ -372,6 +372,7 @@ class CS extends State<Home> {
 
                                 getprompts();
                               } catch (e) {
+                                // ignore: use_build_context_synchronously
                                 showDialog(
                                     context: context,
                                     builder: (_) => AlertDialog(
