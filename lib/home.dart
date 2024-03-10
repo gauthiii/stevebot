@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -40,7 +43,7 @@ class CS extends State<Home> {
   List<Prompt> prompts = [];
   setGPT() async {
     openAI = OpenAI.instance.build(
-        token: "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",
+        token: "Api_Key",
         baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
         enableLog: true);
 
@@ -65,6 +68,19 @@ class CS extends State<Home> {
 
     _initSpeech();
     setGPT();
+
+    Gemini.init(apiKey: 'Api_Key');
+
+    /*  
+    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
+    AIzaSyBa8Uyx7Ie_ve_5xil7l0cPkxRr6WtQJUc
+     gemini
+        .streamGenerateContent('Utilizing Google Ads in Flutter')
+        .listen((value) {
+      print(value.output);
+    }).onError((e) {
+      log('streamGenerateContent exception', error: e);
+    }); */
   }
 
   /// This has to happen only once per app
@@ -219,11 +235,13 @@ class CS extends State<Home> {
     });
   }
 
+  //21F3CE
+
   @override
   Widget build(BuildContext context) {
     if (isAuth == false) {
       return Scaffold(
-          backgroundColor: _getColorFromHex("#21F3CE"),
+          backgroundColor: _getColorFromHex("#249ac3"),
           body: Column(
             children: [
               Container(height: 100),
@@ -251,7 +269,7 @@ class CS extends State<Home> {
                         style: TextStyle(
                           fontFamily: "Poppins-Bold",
                           fontWeight: FontWeight.bold,
-                          color: _getColorFromHex("#21F3CE"),
+                          color: _getColorFromHex("#249ac3"),
                           fontSize: 16.0,
                         ),
                         textAlign: TextAlign.center),
@@ -262,15 +280,16 @@ class CS extends State<Home> {
           ));
     } else {
       return Scaffold(
-        backgroundColor: _getColorFromHex("#21F3CE"),
+        backgroundColor: _getColorFromHex("#249ac3"),
         appBar: AppBar(
             centerTitle: true,
-            title: const Text("Steve Bot",
+            backgroundColor: Colors.grey[900],
+            title: const Text("Steve Bot !!!",
                 style: TextStyle(
-                  fontFamily: "Poppins-Regular",
-                  fontWeight: FontWeight.bold,
+                  fontFamily: "Bangers",
+                  fontWeight: FontWeight.normal,
                   color: Colors.white,
-                  fontSize: 20.0,
+                  fontSize: 40.0,
                 ),
                 textAlign: TextAlign.center),
             actions: [
@@ -280,7 +299,8 @@ class CS extends State<Home> {
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: [
-              const Text("Copyright © 2023 Steve Bot. All rights reserved.",
+              const Text(
+                  "Copyright © 2023 Steve Bot. All rights reserved.\nPowered by OpenAI and Gemini",
                   style: TextStyle(
                     fontFamily: "Poppins-Regular",
                     //fontWeight: FontWeight.bold,
@@ -371,13 +391,83 @@ class CS extends State<Home> {
                                 });
 
                                 getprompts();
-                              } catch (e) {
+                              } catch (e1) {
+                                final gemini = Gemini.instance;
+                                gemini
+                                    .text("${sub.text.trim()}.")
+                                    .then((value) {
+                                  // print(value?.output);
+
+                                  setState(() {
+                                    String id = const Uuid().v4();
+
+                                    chatRef
+                                        .doc(currentUser.email)
+                                        .collection("chats")
+                                        .doc(id)
+                                        .set({
+                                      "email": currentUser.email,
+                                      "question": sub.text.trim(),
+                                      "response": value?.output,
+                                      "id": id,
+                                      "timestamp": DateTime.now(),
+                                    });
+
+                                    sub.clear();
+
+                                    _lastWords = '';
+                                  });
+
+                                  getprompts();
+                                })
+
+                                    /// or value?.content?.parts?.last.text
+                                    .catchError((e) {
+                                  print(e);
+
+                                  bool x = e.toString().contains(
+                                      "the request contains bad syntax");
+
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            backgroundColor:
+                                                _getColorFromHex("#249ac3"),
+                                            title: const Text("Try Again",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontFamily: "Poppins-Bold",
+                                                    fontSize: 16.0,
+                                                    // fontWeight: FontWeight.bold,
+                                                    color: Colors.black)),
+                                            content: Text(
+                                                x == true
+                                                    ? "Your API Key has expired. Upgrade your subscription for more prompts"
+                                                    : "Your messages are reloading\n$e",
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                    fontFamily:
+                                                        "Poppins-Regular",
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black)),
+                                          ));
+                                });
+
+                                /*
+                                // ignore: use_build_context_synchronously
+
+                                print(e);
+                                bool x = e
+                                    .toString()
+                                    .contains("Incorrect API key provided");
+
                                 // ignore: use_build_context_synchronously
                                 showDialog(
                                     context: context,
                                     builder: (_) => AlertDialog(
                                           backgroundColor:
-                                              _getColorFromHex("#21F3CE"),
+                                              _getColorFromHex("#249ac3"),
                                           title: const Text("Try Again",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
@@ -386,7 +476,9 @@ class CS extends State<Home> {
                                                   // fontWeight: FontWeight.bold,
                                                   color: Colors.black)),
                                           content: Text(
-                                              "Your messages are reloading\n$e",
+                                              x == true
+                                                  ? "Your API Key has expired. Upgrade your subscription for more prompts"
+                                                  : "Your messages are reloading\n$e",
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
                                                   fontSize: 14.0,
@@ -394,13 +486,15 @@ class CS extends State<Home> {
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.black)),
                                         ));
+
+                                        */
                               }
                             } else {
                               showDialog(
                                   context: context,
                                   builder: (_) => AlertDialog(
                                         backgroundColor:
-                                            _getColorFromHex("#21F3CE"),
+                                            _getColorFromHex("#249ac3"),
                                         title: const Text("Blank Entry",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
@@ -515,12 +609,12 @@ class CS extends State<Home> {
                             ),
                           )),
                     ChatBubble(
-                        elevation: 10,
+                        elevation: 0,
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         alignment: Alignment.topRight,
                         clipper:
                             ChatBubbleClipper3(type: BubbleType.sendBubble),
-                        backGroundColor: Colors.amber[300],
+                        backGroundColor: Colors.black,
                         child: InkWell(
                           onLongPress: () {
                             showDialog(
@@ -581,12 +675,12 @@ class CS extends State<Home> {
                                       Flexible(
                                           child: RichText(
                                         text: TextSpan(
-                                          text: ("You : "),
+                                          text: ("You :\n\n"),
                                           style: const TextStyle(
-                                            fontFamily: "Poppins-Bold",
+                                            fontFamily: "Bangers",
                                             //fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: 16.0,
+                                            color: Colors.amber,
+                                            fontSize: 20.0,
                                           ),
                                           children: <TextSpan>[
                                             TextSpan(
@@ -594,8 +688,8 @@ class CS extends State<Home> {
                                                 style: const TextStyle(
                                                   fontFamily: "Poppins-Regular",
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                  fontSize: 16.0,
+                                                  color: Colors.amber,
+                                                  fontSize: 12.0,
                                                 )),
                                           ],
                                         ),
@@ -629,7 +723,7 @@ class CS extends State<Home> {
                         alignment: Alignment.topLeft,
                         clipper:
                             ChatBubbleClipper3(type: BubbleType.receiverBubble),
-                        backGroundColor: Colors.red[800],
+                        backGroundColor: Colors.black,
                         child: InkWell(
                           onLongPress: () {
                             showDialog(
@@ -690,12 +784,12 @@ class CS extends State<Home> {
                                       Flexible(
                                           child: RichText(
                                         text: TextSpan(
-                                          text: ("ChatGPT : "),
+                                          text: ("Steve :\n\n"),
                                           style: const TextStyle(
-                                            fontFamily: "Poppins-Bold",
+                                            fontFamily: "Bangers",
                                             //fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: 16.0,
+                                            color: Colors.white,
+                                            fontSize: 20.0,
                                           ),
                                           children: <TextSpan>[
                                             TextSpan(
@@ -703,8 +797,8 @@ class CS extends State<Home> {
                                                 style: const TextStyle(
                                                   fontFamily: "Poppins-Regular",
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                  fontSize: 16.0,
+                                                  color: Colors.white,
+                                                  fontSize: 12.0,
                                                 )),
                                           ],
                                         ),
@@ -784,14 +878,14 @@ _getColorFromHex(String hexColor) {
 
 String funny(String x) {
   String a;
-  print(x);
+  // print(x);
   a = x.substring(11, 16);
-  print(a);
+//  print(a);
   int p = int.parse(a.substring(0, 2));
-  print(p);
+  // print(p);
   if (p == 0) {
     p += 12;
-    print(p);
+    //  print(p);
     a = "$p${x.substring(13, 16)} AM";
   } else if (p >= 1 && p <= 11) {
     a = "$a AM";
@@ -799,11 +893,11 @@ String funny(String x) {
     a = "$a PM";
   } else if (p > 12) {
     p -= 12;
-    print(p);
+    // print(p);
     a = "$p${x.substring(13, 16)} PM";
   }
 
-  print(a);
+//  print(a);
   return a;
 }
 
