@@ -72,8 +72,7 @@ class CS extends State<Home> {
     Gemini.init(apiKey: 'Api_Key');
 
     /*  
-    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
-    AIzaSyBa8Uyx7Ie_ve_5xil7l0cPkxRr6WtQJUc
+    
      gemini
         .streamGenerateContent('Utilizing Google Ads in Flutter')
         .listen((value) {
